@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
 // Componentes da UI
-import { Button, Alert, Box, List, ListItem, ListItemText, Typography, Divider } from '@mui/material';
+import { Button, Alert } from '@mui/material';
 import InputField from '../../components/InputField';
 import FormContainer from '../../components/FormContainer';
 
@@ -61,10 +61,9 @@ export default function PatiosPage() {
     }
   };
 
-  // 2. Veja como o retorno do componente ficou muito mais limpo!
+
   return (
     <FormContainer title="Cadastrar Novo Pátio" onSubmit={handleSubmit}>
-      {/* 3. Todo o conteúdo do formulário agora é "filho" do FormContainer */}
       <InputField
         name="name"
         label="Nome do Pátio"
