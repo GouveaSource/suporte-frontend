@@ -2,60 +2,53 @@
 
 import React, { useState, useEffect } from "react";
 import api from "@/services/api";
-
-// Imports do MUI
 import {
   Button,
   Alert,
   Box,
-  List,
-  ListItem,
-  ListItemText,
   Typography,
-  Divider,
   Container,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
 } from "@mui/material";
-// Imports dos Ícones
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-// Nossos componentes
+import AddIcon from "@mui/icons-material/Add";
 import InputField from "@/components/InputField";
-import FormContainer from "@/components/FormContainer";
+import GenericTable, { ColumnDef } from "@/components/GenericTable";
 
-// Interfaces
-interface FormData {
-  name: string;
-  address: string;
-  cep: string;
-  managerName: string;
-}
-
+// Interface atualizada com todos os campos do backend
 interface Patio {
   id: string;
   name: string;
   address: string;
   cep: string;
+  referencePoint: string | null;
+  mapUrl: string | null;
+  phone: string;
+  ramal: string | null;
   managerName: string | null;
 }
 
-export default function PatiosPage() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    address: "",
-    cep: "",
-    managerName: "",
-  });
+// O FormData pode ser um Partial<Patio> para facilitar
+type FormData = Omit<Patio, "id">;
 
+const initialFormData: FormData = {
+  name: "",
+  address: "",
+  cep: "",
+  referencePoint: "",
+  mapUrl: "",
+  phone: "",
+  ramal: "",
+  managerName: "",
+};
+
+export default function PatiosPage() {
+  const [formData, setFormData] = useState<FormData>(initialFormData);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [patios, setPatios] = useState<Patio[]>([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPatio, setEditingPatio] = useState<Patio | null>(null);
 
@@ -65,6 +58,7 @@ export default function PatiosPage() {
       setPatios(response.data);
     } catch (error) {
       console.error("Erro ao buscar pátios:", error);
+      setErrorMessage("Erro ao carregar a lista de pátios.");
     }
   };
 
@@ -74,10 +68,38 @@ export default function PatiosPage() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    if (editingPatio) {
+      setEditingPatio({ ...editingPatio, [name]: value });
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleOpenModal = (patio: Patio | null) => {
+    setEditingPatio(patio);
+    if (patio) {
+      // Preenche o formulário com os dados do pátio para edição
+      setFormData({
+        name: patio.name || "",
+        address: patio.address || "",
+        cep: patio.cep || "",
+        referencePoint: patio.referencePoint || "",
+        mapUrl: patio.mapUrl || "",
+        phone: patio.phone || "",
+        ramal: patio.ramal || "",
+        managerName: patio.managerName || "",
+      });
+    } else {
+      // Limpa o formulário para um novo cadastro
+      setFormData(initialFormData);
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingPatio(null);
+    setFormData(initialFormData);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -85,18 +107,28 @@ export default function PatiosPage() {
     setSuccessMessage(null);
     setErrorMessage(null);
 
+    const dataToSubmit = editingPatio ? { ...editingPatio, ...formData } : formData;
+    const url = editingPatio ? `/patios/${editingPatio.id}` : "/patios";
+    const method = editingPatio ? "put" : "post";
+
     try {
-      const response = await api.post("/patios", formData);
-      if (response.status === 201) {
-        setSuccessMessage(`Pátio "${response.data.name}" criado com sucesso!`);
-        setFormData({ name: "", address: "", cep: "", managerName: "" });
+      const response = await api[method](url, dataToSubmit);
+      if (response.status === 200 || response.status === 201) {
+        setSuccessMessage(
+          `Pátio "${response.data.name}" ${
+            editingPatio ? "atualizado" : "criado"
+          } com sucesso!`
+        );
+        handleCloseModal();
         fetchPatios();
       }
     } catch (error) {
       setErrorMessage(
-        "Erro ao criar o pátio. Verifique os dados e tente novamente."
+        `Erro ao ${
+          editingPatio ? "atualizar" : "criar"
+        } o pátio. Verifique os dados.`
       );
-      console.error("Erro ao enviar o formulário:", error);
+      console.error("Erro no formulário:", error);
     }
   };
 
@@ -105,196 +137,81 @@ export default function PatiosPage() {
       try {
         await api.delete(`/patios/${patioId}`);
         setSuccessMessage("Pátio excluído com sucesso!");
-        setTimeout(() => setSuccessMessage(null), 3000);
         fetchPatios();
       } catch (error) {
         setErrorMessage("Erro ao excluir o pátio.");
-        setTimeout(() => setErrorMessage(null), 3000);
         console.error("Erro ao excluir:", error);
       }
     }
   };
 
-  const handleEditClick = (patio: Patio) => {
-    setEditingPatio(patio);
-    setIsModalOpen(true);
-  };
+  // Colunas atualizadas para a tabela
+  const columns: ColumnDef<Patio>[] = [
+    { header: "Nome", accessor: (p) => p.name },
+    { header: "Telefone", accessor: (p) => p.phone},
+    { header: "Ramal", accessor: (p) => p.ramal || "N/A" },
+    { header: "Administrador", accessor: (p) => p.managerName || "N/A" },
+    { header: "Endereço", accessor: (p) => p.address || "N/A" },
+    { header: "CEP", accessor: (p) => p.cep || "N/A" },
+    { header: "Ponto de Referência", accessor: (p) => p.referencePoint || "N/A" },
+    { header: "URL do Mapa", accessor: (p) => p.mapUrl || "N/A" },
+  ];
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setEditingPatio(null);
-  };
-
-  const handleUpdateSubmit = async () => {
-    if (!editingPatio) return;
-    try {
-      await api.put(`/patios/${editingPatio.id}`, {
-        name: editingPatio.name,
-        address: editingPatio.address,
-        cep: editingPatio.cep,
-        managerName: editingPatio.managerName,
-      });
-      setSuccessMessage("Pátio atualizado com sucesso!");
-      setTimeout(() => setSuccessMessage(null), 3000);
-      handleModalClose();
-      fetchPatios();
-    } catch (error) {
-      setErrorMessage("Erro ao atualizar o pátio.");
-      setTimeout(() => setErrorMessage(null), 3000);
-      console.error("Erro ao atualizar:", error);
-    }
-  };
-
-  const handleEditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (editingPatio) {
-      setEditingPatio({
-        ...editingPatio,
-        [event.target.name]: event.target.value,
-      });
-    }
-  };
+  const currentData = editingPatio ?? formData;
 
   return (
-    <Container component="main" maxWidth="md">
-      <FormContainer title="Cadastrar Novo Pátio" onSubmit={handleSubmit}>
-        <InputField
-          name="name"
-          label="Nome do Pátio"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          autoFocus
-        />
-        <InputField
-          name="address"
-          label="Endereço"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          name="cep"
-          label="CEP"
-          value={formData.cep}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          name="managerName"
-          label="Nome do Administrador (Opcional)"
-          value={formData.managerName}
-          onChange={handleChange}
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Cadastrar
-        </Button>
-      </FormContainer>
-
-      <Box sx={{ width: "100%", maxWidth: "sm", margin: "auto", mt: 2 }}>
-        {successMessage && (
-          <Alert severity="success" onClose={() => setSuccessMessage(null)}>
-            {successMessage}
-          </Alert>
-        )}
-        {errorMessage && (
-          <Alert severity="error" onClose={() => setErrorMessage(null)}>
-            {errorMessage}
-          </Alert>
-        )}
-      </Box>
-
-      <Box sx={{ width: "100%", mt: 8, mb: 4 }}>
-        <Typography component="h2" variant="h5" align="center" gutterBottom>
-          Pátios Cadastrados
+    <Container component="main" maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography component="h1" variant="h4">
+          Gerenciamento de Pátios
         </Typography>
-        <List
-          sx={{ bgcolor: "background.paper", borderRadius: 2, boxShadow: 1 }}
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => handleOpenModal(null)}
         >
-          {patios.map((patio, index) => (
-            <React.Fragment key={patio.id}>
-              <ListItem
-                secondaryAction={
-                  <Box>
-                    <IconButton
-                      edge="end"
-                      aria-label="edit"
-                      onClick={() => handleEditClick(patio)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => handleDelete(patio.id)}
-                      sx={{ ml: 1 }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                }
-              >
-                <ListItemText
-                  primary={patio.name}
-                  secondary={`Admin: ${patio.managerName || "Não informado"}`}
-                />
-              </ListItem>
-              {index < patios.length - 1 && <Divider component="li" />}
-            </React.Fragment>
-          ))}
-        </List>
+          Novo Pátio
+        </Button>
       </Box>
 
-      <Dialog
-        open={isModalOpen}
-        onClose={handleModalClose}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Editar Pátio</DialogTitle>
-        <DialogContent>
-          {editingPatio && (
-            <Box component="div" sx={{ pt: 2 }}>
-              <InputField
-                name="name"
-                label="Nome do Pátio"
-                value={editingPatio.name}
-                onChange={handleEditChange}
-                required
-              />
-              <InputField
-                name="address"
-                label="Endereço"
-                value={editingPatio.address}
-                onChange={handleEditChange}
-                required
-              />
-              <InputField
-                name="cep"
-                label="CEP"
-                value={editingPatio.cep}
-                onChange={handleEditChange}
-                required
-              />
-              <InputField
-                name="managerName"
-                label="Nome do Administrador"
-                value={editingPatio.managerName || ""}
-                onChange={handleEditChange}
-              />
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions sx={{ p: "16px 24px" }}>
-          <Button onClick={handleModalClose}>Cancelar</Button>
-          <Button onClick={handleUpdateSubmit} variant="contained">
-            Salvar Alterações
-          </Button>
-        </DialogActions>
+      {successMessage && (
+        <Alert severity="success" onClose={() => setSuccessMessage(null)} sx={{ mb: 2 }}>
+          {successMessage}
+        </Alert>
+      )}
+      {errorMessage && (
+        <Alert severity="error" onClose={() => setErrorMessage(null)} sx={{ mb: 2 }}>
+          {errorMessage}
+        </Alert>
+      )}
+
+      <GenericTable
+        data={patios}
+        columns={columns}
+        onEdit={(patio) => handleOpenModal(patio)}
+        onDelete={handleDelete}
+      />
+
+      <Dialog open={isModalOpen} onClose={handleCloseModal} fullWidth maxWidth="sm">
+        <DialogTitle>{editingPatio ? "Editar Pátio" : "Cadastrar Novo Pátio"}</DialogTitle>
+        <form onSubmit={handleSubmit}>
+          <DialogContent>
+            <InputField name="name" label="Nome do Pátio" value={currentData.name} onChange={handleChange} required autoFocus />
+            <InputField name="address" label="Endereço" value={currentData.address} onChange={handleChange} required />
+            <InputField name="cep" label="CEP" value={currentData.cep} onChange={handleChange} required />
+            <InputField name="phone" label="Telefone" value={currentData.phone} onChange={handleChange} required/>
+            <InputField name="ramal" label="Ramal" value={currentData.ramal || ""} onChange={handleChange} />
+            <InputField name="referencePoint" label="Ponto de Referência" value={currentData.referencePoint || ""} onChange={handleChange} />
+            <InputField name="mapUrl" label="URL do Mapa" value={currentData.mapUrl || ""} onChange={handleChange} />
+            <InputField name="managerName" label="Nome do Administrador" value={currentData.managerName || ""} onChange={handleChange} />
+          </DialogContent>
+          <DialogActions sx={{ p: "16px 24px" }}>
+            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button type="submit" variant="contained">
+              {editingPatio ? "Salvar Alterações" : "Cadastrar"}
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </Container>
   );
