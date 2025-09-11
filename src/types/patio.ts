@@ -4,10 +4,10 @@ export interface Patio {
   address: string;
   cep: string;
   referencePoint: string | null;
-  mapUrl: string | null;
+  mapUrl: string;
   phone: string;
   ramal: string | null;
-  managerName: string | null;
+  managerName: string;
 }
 
 export type FormData = Omit<Patio, 'id'>;

@@ -40,11 +40,11 @@ export default function PatiosPage() {
     { header: 'Nome', accessor: (p) => p.name },
     { header: 'Telefone', accessor: (p) => p.phone },
     { header: 'Ramal', accessor: (p) => p.ramal || 'N/A' },
-    { header: 'Administrador', accessor: (p) => p.managerName || 'N/A' },
+    { header: 'Administrador', accessor: (p) => p.managerName},
     { header: 'Endereço', accessor: (p) => p.address || 'N/A' },
     { header: 'CEP', accessor: (p) => p.cep || 'N/A' },
-    { header: 'Ponto de Referência',accessor: (p) => p.referencePoint || 'N/A',},
-    { header: 'URL do Mapa', accessor: (p) => p.mapUrl || 'N/A' },
+    { header: 'Referência',accessor: (p) => p.referencePoint || 'N/A',},
+    { header: 'URL do Mapa', accessor: (p) => p.mapUrl},
   ];
 
   const currentData = formData;
@@ -147,21 +147,23 @@ export default function PatiosPage() {
             />
             <InputField
               name="referencePoint"
-              label="Ponto de Referência"
+              label="Referência"
               value={currentData.referencePoint || ''}
               onChange={handleChange}
             />
             <InputField
               name="mapUrl"
               label="URL do Mapa"
-              value={currentData.mapUrl || ''}
+              value={currentData.mapUrl}
               onChange={handleChange}
+              required
             />
             <InputField
               name="managerName"
               label="Nome do Administrador"
-              value={currentData.managerName || ''}
+              value={currentData.managerName}
               onChange={handleChange}
+              required
             />
           </DialogContent>
           <DialogActions sx={{ p: '16px 24px' }}>
