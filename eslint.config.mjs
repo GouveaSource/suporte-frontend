@@ -1,20 +1,35 @@
-import prettierConfig from "eslint-config-prettier";
+// suporte-frontend/eslint.config.mjs
 
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-import { defineConfig } from "eslint/config";
+import prettierConfig from 'eslint-config-prettier';
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+import pluginReact from 'eslint-plugin-react';
 
-export default defineConfig([
+export default [
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
-    languageOptions: { globals: globals.browser },
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
   },
-  tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  
+  // Configuração do React
+  {
+    files: ['**/*.{jsx,tsx}'],
+    ...pluginReact.configs.flat.recommended,
+    ...pluginReact.configs.flat['jsx-runtime'], // <-- ADICIONE ESTA LINHA
+    settings: {
+      react: {
+        version: 'detect', // <-- ADICIONE ESTA CONFIGURAÇÃO
+      },
+    },
+  },
 
-  prettierConfig, 
-]);
+  prettierConfig,
+];
