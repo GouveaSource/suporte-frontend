@@ -40,7 +40,7 @@ export default function AdminLayout({
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h5" noWrap component="div">
             Painel de Suporte
           </Typography>
         </Toolbar>
@@ -57,7 +57,7 @@ export default function AdminLayout({
           },
         }}
       >
-        <Toolbar /> {/* Espaçador para o conteúdo não ficar atrás da AppBar */}
+        <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {menuItems.map((item) => (
@@ -82,8 +82,8 @@ export default function AdminLayout({
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar /> {/* Outro espaçador para o conteúdo principal */}
+      <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
+        <Toolbar />
         {children} {/* Aqui que as páginas (page.tsx) serão renderizadas! */}
       </Box>
     </Box>

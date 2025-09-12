@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { usePatiosPage } from '@/hooks/usePatiosPage';
 import { Patio } from '@/types/patio';
 import {
@@ -40,11 +39,11 @@ export default function PatiosPage() {
     { header: 'Nome', accessor: (p) => p.name },
     { header: 'Telefone', accessor: (p) => p.phone },
     { header: 'Ramal', accessor: (p) => p.ramal || 'N/A' },
-    { header: 'Administrador', accessor: (p) => p.managerName},
+    { header: 'Administrador', accessor: (p) => p.managerName },
     { header: 'Endereço', accessor: (p) => p.address || 'N/A' },
     { header: 'CEP', accessor: (p) => p.cep || 'N/A' },
-    { header: 'Referência',accessor: (p) => p.referencePoint || 'N/A',},
-    { header: 'URL do Mapa', accessor: (p) => p.mapUrl},
+    { header: 'Referência', accessor: (p) => p.referencePoint || 'N/A' },
+    { header: 'URL do Mapa', accessor: (p) => p.mapUrl },
   ];
 
   const currentData = formData;
