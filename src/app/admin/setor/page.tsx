@@ -1,4 +1,3 @@
-// suporte-frontend/src/app/admin/setores/page.tsx
 'use client';
 
 import React from 'react';
@@ -37,10 +36,10 @@ export default function SetoresPage() {
     setErrorMessage,
   } = useSetoresPage();
 
-  // Define as colunas para a nossa tabela genérica
+  // Define as colunas para tabela genérica
   const columns: ColumnDef<Setor>[] = [
     { header: 'Setor', accessor: (s) => s.name },
-    { header: 'Telefone/Whatsapp', accessor: (s) => s.phone },
+    { header: 'Contato', accessor: (s) => s.phone },
     { header: 'Ramal', accessor: (s) => s.ramal || 'N/A' },
     { header: 'Responsável', accessor: (s) => s.responsible || 'N/A' },
   ];
