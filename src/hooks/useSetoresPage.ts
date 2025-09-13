@@ -1,8 +1,9 @@
-// suporte-frontend/src/hooks/useSetoresPage.ts
+// suporte-frontend/src/hooks/useSetoresPage.ts (Versão Corrigida)
 
 import { useState } from 'react';
 import { useSetores } from '@/hooks/useSetores';
 import { Setor, FormData } from '@/types/setor';
+import { phoneMask } from '@/utils/maskUtils';
 
 const initialFormData: FormData = {
     name: '',
@@ -23,17 +24,25 @@ export function useSetoresPage() {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        if (name === 'phone') {
+            setFormData((prev) => ({ ...prev, [name]: phoneMask(value) }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleOpenModal = (setor: Setor | null) => {
         setEditingSetor(setor);
-        setFormData(setor ? {
-            name: setor.name,
-            phone: setor.phone,
-            ramal: setor.ramal || '',
-            responsible: setor.responsible || '',
-        } : initialFormData);
+        setFormData(
+            setor
+                ? {
+                    name: setor.name,
+                    phone: setor.phone,
+                    ramal: setor.ramal || '',
+                    responsible: setor.responsible || '',
+                }
+                : initialFormData,
+        );
         setIsModalOpen(true);
     };
 
@@ -58,7 +67,8 @@ export function useSetoresPage() {
             handleCloseModal();
         } catch {
             setErrorMessage(
-                `Erro ao ${editingSetor ? 'atualizar' : 'criar'} o setor. Verifique os dados.`,
+                `Erro ao ${editingSetor ? 'atualizar' : 'criar'
+                } o setor. Verifique os dados.`,
             );
         }
     };

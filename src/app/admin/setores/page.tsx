@@ -2,6 +2,7 @@
 
 import { useSetoresPage } from '@/hooks/useSetoresPage';
 import { Setor } from '@/types/setor';
+
 import {
   Button,
   Alert,

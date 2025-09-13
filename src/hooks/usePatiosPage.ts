@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { usePatios } from '@/hooks/usePatios';
 import { Patio, FormData } from '@/types/patio';
+import { cepMask, phoneMask } from '@/utils/maskUtils';
 
 const initialFormData: FormData = {
   name: '',
@@ -25,7 +26,16 @@ export function usePatiosPage() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let maskedValue = value;
+
+    if (name === 'cep') {
+      maskedValue = cepMask(value);
+    } else if (name === 'phone') {
+      maskedValue = phoneMask(value);
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: maskedValue }));
   };
 
   const handleOpenModal = (patio: Patio | null) => {
