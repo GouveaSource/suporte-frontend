@@ -1,8 +1,9 @@
-// suporte-frontend/src/app/admin/layout.tsx
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   AppBar,
   Box,
@@ -14,18 +15,20 @@ import {
   ListItemText,
   Toolbar,
   Typography,
+  CircularProgress,
+  IconButton,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import DomainAddIcon from '@mui/icons-material/DomainAdd';
-import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth = 240;
 
-// Itens do nosso menu
 const menuItems = [
   { text: 'Dashboard', href: '/admin', icon: <DashboardIcon /> },
-  { text: 'Pátios', href: '/admin/patios', icon: <DomainAddIcon /> },
-  { text: 'Setores', href: '/admin/setores', icon: <AddBusinessIcon /> },
+  { text: 'Pátios', href: '/admin/patios', icon: <ApartmentIcon /> },
+  { text: 'Setores', href: '/admin/setores', icon: <BusinessCenterIcon /> },
 ];
 
 export default function AdminLayout({
@@ -33,16 +36,44 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
+  const { isAuthenticated, loading, signOut } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, loading, router]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return isAuthenticated ? (
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <Toolbar>
-          <Typography variant="h5" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Painel de Suporte
           </Typography>
+          <IconButton color="inherit" onClick={signOut}>
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -82,10 +113,10 @@ export default function AdminLayout({
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        {children} {/* Aqui que as páginas (page.tsx) serão renderizadas! */}
+        {children}
       </Box>
     </Box>
-  );
+  ) : null;
 }
