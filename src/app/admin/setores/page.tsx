@@ -62,7 +62,7 @@ export default function SetoresPage() {
           startIcon={<AddIcon />}
           onClick={() => handleOpenModal(null)}
         >
-          Novo Setor
+          Novo
         </Button>
       </Box>
 

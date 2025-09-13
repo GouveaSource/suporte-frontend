@@ -14,6 +14,8 @@ import {
   DialogActions,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { Link, IconButton } from '@mui/material';
+import MapIcon from '@mui/icons-material/Map';
 import InputField from '@/components/InputField';
 import GenericTable, { ColumnDef } from '@/components/GenericTable';
 
@@ -43,7 +45,19 @@ export default function PatiosPage() {
     { header: 'Endereço', accessor: (p) => p.address || 'N/A' },
     { header: 'CEP', accessor: (p) => p.cep || 'N/A' },
     { header: 'Referência', accessor: (p) => p.referencePoint || 'N/A' },
-    { header: 'URL do Mapa', accessor: (p) => p.mapUrl },
+    {
+      header: 'Mapa',
+      accessor: (p) =>
+        p.mapUrl ? (
+          <Link href={p.mapUrl} target="_blank" rel="noopener noreferrer">
+            <IconButton color="primary" aria-label="Abrir no mapa">
+              <MapIcon />
+            </IconButton>
+          </Link>
+        ) : (
+          'Isento'
+        ),
+    },
   ];
 
   const currentData = formData;
@@ -66,7 +80,7 @@ export default function PatiosPage() {
           startIcon={<AddIcon />}
           onClick={() => handleOpenModal(null)}
         >
-          Novo Pátio
+          Novo
         </Button>
       </Box>
 

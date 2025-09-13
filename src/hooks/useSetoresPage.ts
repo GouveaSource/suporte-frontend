@@ -1,5 +1,3 @@
-// suporte-frontend/src/hooks/useSetoresPage.ts (Versão Corrigida)
-
 import { useState } from 'react';
 import { useSetores } from '@/hooks/useSetores';
 import { Setor, FormData } from '@/types/setor';

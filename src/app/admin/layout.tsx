@@ -16,16 +16,16 @@ import {
   Typography,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ApartmentIcon from '@mui/icons-material/Apartment';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import DomainAddIcon from '@mui/icons-material/DomainAdd';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 
 const drawerWidth = 240;
 
 // Itens do nosso menu
 const menuItems = [
   { text: 'Dashboard', href: '/admin', icon: <DashboardIcon /> },
-  { text: 'Pátios', href: '/admin/patios', icon: <ApartmentIcon /> },
-  { text: 'Setores', href: '/admin/setores', icon: <BusinessCenterIcon /> },
+  { text: 'Pátios', href: '/admin/patios', icon: <DomainAddIcon /> },
+  { text: 'Setores', href: '/admin/setores', icon: <AddBusinessIcon /> },
 ];
 
 export default function AdminLayout({
