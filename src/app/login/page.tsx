@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useState, FormEvent } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -10,6 +11,7 @@ import {
   Typography,
   Alert,
   CircularProgress,
+  Grid,
 } from '@mui/material';
 
 export default function LoginPage() {
@@ -86,6 +88,23 @@ export default function LoginPage() {
           >
             {isLoading ? <CircularProgress size={24} /> : 'Entrar'}
           </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid>
+              <Link href="/cadastro" passHref>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  sx={{
+                    cursor: 'pointer',
+                    color: 'primary.main',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Não tem uma conta? Cadastre-se
+                </Typography>
+              </Link>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
     </Container>

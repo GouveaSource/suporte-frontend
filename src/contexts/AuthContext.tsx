@@ -8,11 +8,8 @@ import React, {
   ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../services/api';
-import {
-  signIn as apiSignIn,
-  SignInCredentials,
-} from '../services/authServise';
+import api from '@/services/api';
+import { signIn as apiSignIn, SignInCredentials } from '@/services/authService';
 
 interface User {
   id: string;
