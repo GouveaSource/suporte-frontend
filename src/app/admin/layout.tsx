@@ -41,10 +41,10 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (loading) return;
-    if (!isAuthenticated) {
-      router.push('/login');
+    if (!isAuthenticated || user?.role !== 'ADMIN') {
+      router.push('/dashboard');
     }
-  }, [isAuthenticated, loading, router]);
+  }, [isAuthenticated, loading, router, user]);
 
   if (loading) {
     return (

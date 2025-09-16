@@ -53,7 +53,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(userData);
-      router.push('/admin');
+
+      if (userData.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error) {
       console.error('Erro no login:', error);
       throw new Error('Email ou senha inválidos.');
