@@ -36,12 +36,20 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, loading, signOut } = useAuth();
+  const { isAuthenticated, loading, signOut, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
-    if (!isAuthenticated || user?.role !== 'ADMIN') {
+    if (loading) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
+    if (isAuthenticated && user?.role !== 'ADMIN') {
       router.push('/dashboard');
     }
   }, [isAuthenticated, loading, router, user]);
