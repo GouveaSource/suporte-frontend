@@ -17,7 +17,7 @@ export function useSetoresPage() {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const { setores, error, handleCreate, handleUpdate, handleDelete, reload } =
+    const { setores, loading, error, handleCreate, handleUpdate, handleDelete, reload } =
         useSetores();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +90,7 @@ export function useSetoresPage() {
         errorMessage,
         setores,
         error,
+        loading,
         handleChange,
         handleOpenModal,
         handleCloseModal,

@@ -3,6 +3,8 @@ import { usePatios } from '@/hooks/usePatios';
 import { Patio, FormData } from '@/types/patio';
 import { cepMask, phoneMask } from '@/utils/maskUtils';
 
+const { patios, loading, error, handleCreate, handleUpdate, handleDelete, reload } = usePatios();
+
 const initialFormData: FormData = {
   name: '',
   address: '',
@@ -104,6 +106,7 @@ export function usePatiosPage() {
     errorMessage,
     patios,
     error,
+    loading,
     handleChange,
     handleOpenModal,
     handleCloseModal,

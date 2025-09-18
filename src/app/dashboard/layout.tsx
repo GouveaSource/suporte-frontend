@@ -12,6 +12,7 @@ import {
   IconButton,
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
+import DashboardNav from '@/components/DashboardNav';
 
 export default function DashboardLayout({
   children,
@@ -28,7 +29,6 @@ export default function DashboardLayout({
     }
   }, [isAuthenticated, loading, router]);
 
-  // Feedback de carregamento
   if (loading) {
     return (
       <Box
@@ -44,9 +44,8 @@ export default function DashboardLayout({
     );
   }
 
-  // Renderiza o layout apenas se estiver autenticado
   return isAuthenticated ? (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -58,9 +57,12 @@ export default function DashboardLayout({
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: '100%' }}>
-        <Toolbar /> {/* Espaçador para o conteúdo não ficar atrás da AppBar */}
-        {children}
+
+      <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px' }}>
+        <Box component="main" sx={{ flexGrow: 1, width: '100%' }}>
+          <DashboardNav />
+          <Box sx={{ p: 3 }}>{children}</Box>
+        </Box>
       </Box>
     </Box>
   ) : null;
