@@ -10,13 +10,7 @@ import React, {
 import { useRouter } from 'next/navigation';
 import api from '@/services/api';
 import { signIn as apiSignIn, SignInCredentials } from '@/services/authService';
-
-interface User {
-  id: string;
-  name: string | null;
-  email: string;
-  role: 'ADMIN' | 'USER';
-}
+import { User } from '@/types/user';
 
 interface AuthContextData {
   user: User | null;
@@ -54,7 +48,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(userData);
 
-      if (userData.role === 'ADMIN') {
+      const isAdmin = userData.permissions?.some(
+        (p) => p.name === 'user:manage',
+      );
+
+      if (isAdmin) {
         router.push('/admin');
       } else {
         router.push('/dashboard');

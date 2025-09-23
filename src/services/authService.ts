@@ -1,11 +1,5 @@
 import api from './api';
-
-interface User {
-    id: string;
-    name: string | null;
-    email: string;
-    role: 'ADMIN' | 'USER';
-}
+import { User } from '@/types/user'
 
 export interface SignInCredentials {
     email: string;

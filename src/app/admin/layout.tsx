@@ -49,7 +49,9 @@ export default function AdminLayout({
       return;
     }
 
-    if (isAuthenticated && user?.role !== 'ADMIN') {
+    const isAdmin = user?.permissions?.some((p) => p.name === 'user:manage');
+
+    if (!isAdmin) {
       router.push('/dashboard');
     }
   }, [isAuthenticated, loading, router, user]);
