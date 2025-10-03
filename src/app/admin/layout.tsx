@@ -22,11 +22,13 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import LogoutIcon from '@mui/icons-material/Logout';
+import BusinesIcon from'@mui/icons-material/Business';
 
 const drawerWidth = 240;
 
 const menuItems = [
   { text: 'Dashboard', href: '/admin', icon: <DashboardIcon /> },
+  { text: 'Empresas', href: '/admin/empresas', icon: <BusinesIcon />},
   { text: 'Pátios', href: '/admin/patios', icon: <ApartmentIcon /> },
   { text: 'Setores', href: '/admin/setores', icon: <BusinessCenterIcon /> },
 ];
