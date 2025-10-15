@@ -1,9 +1,8 @@
+// src/hooks/usePatiosPage.ts
 import { useState } from 'react';
 import { usePatios } from '@/hooks/usePatios';
 import { Patio, FormData } from '@/types/patio';
 import { cepMask, phoneMask } from '@/utils/maskUtils';
-
-const { patios, loading, error, handleCreate, handleUpdate, handleDelete, reload } = usePatios();
 
 const initialFormData: FormData = {
   name: '',
@@ -23,20 +22,17 @@ export function usePatiosPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { patios, error, handleCreate, handleUpdate, handleDelete, reload } =
-    usePatios();
+  // AQUI ESTÁ A MUDANÇA: Usando o hook 'usePatios' que já busca os dados
+  const { patios, loading, error, handleCreate, handleUpdate, handleDelete, reload } = usePatios();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
     let maskedValue = value;
-
     if (name === 'cep') {
       maskedValue = cepMask(value);
     } else if (name === 'phone') {
       maskedValue = phoneMask(value);
     }
-
     setFormData((prev) => ({ ...prev, [name]: maskedValue }));
   };
 
@@ -78,7 +74,6 @@ export function usePatiosPage() {
         setSuccessMessage(`Pátio "${formData.name}" criado com sucesso!`);
       }
       handleCloseModal();
-      reload();
     } catch {
       setErrorMessage(
         `Erro ao ${editingPatio ? 'atualizar' : 'criar'} o pátio. Verifique os dados.`,
@@ -91,7 +86,6 @@ export function usePatiosPage() {
       try {
         await handleDelete(patioId);
         setSuccessMessage('Pátio excluído com sucesso!');
-        reload();
       } catch {
         setErrorMessage('Erro ao excluir o pátio.');
       }
