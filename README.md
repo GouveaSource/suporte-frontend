@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Projeto de Suporte - Aplicação Frontend
 
-## Getting Started
+Esta é a aplicação frontend para o Projeto de Suporte. É uma SPA (Single Page Application) construída com Next.js, responsável por toda a interface do usuário e interação com a API backend.
 
-First, run the development server:
+## Tecnologias
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+-   **Framework**: Next.js com React
+-   **Linguagem**: TypeScript
+-   **UI Kit**: Material-UI (MUI)
+-   **Estilização**: Emotion
+-   **Comunicação com API**: Axios
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estrutura de Pastas
+src/
+├── app/          # Rotas e páginas da aplicação (App Router)
+│   ├── (admin)/  # Rotas protegidas para administradores
+│   ├── (dashboard)/ # Rotas para usuários logados
+│   ├── login/    # Página de login
+│   └── ...
+├── components/   # Componentes React reutilizáveis
+├── contexts/     # Contextos React (Ex: Autenticação)
+├── hooks/        # Hooks customizados para lógica de negócio
+├── services/     # Funções para fazer requisições à API (Axios)
+└── types/        # Definições de tipos TypeScript
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Como Rodar (Modo Standalone)
 
-## Learn More
+Embora o método recomendado seja usar o Docker Compose na raiz do projeto, você pode rodar o frontend de forma isolada. **Lembre-se que o backend precisa estar rodando para que o login e outras funcionalidades funcionem.**
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Pré-requisitos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-   Node.js (versão 18 ou superior)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Instalação
 
-## Deploy on Vercel
+Clone o repositório, navegue até a pasta `frontend` e instale as dependências:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`bash
+cd frontend
+npm install
+npm run dev`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### A aplicação estará disponível em http://localhost:3000
