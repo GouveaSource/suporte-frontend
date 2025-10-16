@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSetoresPage } from '@/hooks/useSetoresPage';
+import { usePatiosPage } from '@/hooks/usePatiosPage';
 import {
   Button,
   Alert,
@@ -27,61 +27,59 @@ import {
 import InputField from '@/components/InputField';
 import DataGridComponent from '@/components/DataGrid';
 
-export default function SetoresPage() {
+export default function PatiosPage() {
   const {
     isModalOpen,
-    editingSetor,
+    editingPatio,
     formData,
     successMessage,
     errorMessage,
-    setores,
+    patios,
     error,
     loading,
     handleChange,
     handleOpenModal,
     handleCloseModal,
     handleSubmit,
-    handleDeleteSetor,
+    handleDeletePatio,
     setSuccessMessage,
     setErrorMessage,
     reload,
-  } = useSetoresPage();
+  } = usePatiosPage();
 
-  // ✅ Ajuste de tipo: agora GridRowSelectionModel é um OBJETO
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>({
     type: 'include',
     ids: new Set<GridRowId>(),
   });
 
-  // 🔑 IDs selecionados em array (para length/map)
   const selectedIds = Array.from(selectionModel.ids);
 
   const handleDeleteSelected = async () => {
     if (
       window.confirm(
-        `Tem certeza que deseja excluir ${selectedIds.length} setor(es) selecionado(s)?`,
+        `Tem certeza que deseja excluir ${selectedIds.length} pátio(s) selecionado(s)?`,
       )
     ) {
       try {
         await Promise.all(
-          selectedIds.map((id) => handleDeleteSetor(id as string)),
+          selectedIds.map((id) => handleDeletePatio(id as string)),
         );
         setSuccessMessage(
-          `${selectedIds.length} setor(es) excluído(s) com sucesso!`,
+          `${selectedIds.length} pátio(s) excluído(s) com sucesso!`,
         );
         setSelectionModel({ type: 'include', ids: new Set() }); // limpa a seleção
         reload();
       } catch {
-        setErrorMessage('Ocorreu um erro ao excluir os setores.');
+        setErrorMessage('Ocorreu um erro ao excluir os pátios.');
       }
     }
   };
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Setor', flex: 1.5 },
+    { field: 'name', headerName: 'Pátio', flex: 1.5 },
     { field: 'phone', headerName: 'Contato', flex: 1 },
     {
-      field: 'responsible',
+      field: 'managerName',
       headerName: 'Responsável',
       flex: 1,
       valueGetter: (value) => value || 'N/A',
@@ -113,7 +111,7 @@ export default function SetoresPage() {
         }}
       >
         <Typography component="h1" variant="h4">
-          Gerenciamento de Setores
+          Gerenciamento de Pátios
         </Typography>
         <Box>
           {selectedIds.length > 0 && (
@@ -132,7 +130,7 @@ export default function SetoresPage() {
             startIcon={<AddIcon />}
             onClick={() => handleOpenModal(null)}
           >
-            Novo Setor
+            Novo Pátio
           </Button>
         </Box>
       </Box>
@@ -157,13 +155,12 @@ export default function SetoresPage() {
       )}
 
       <DataGridComponent
-        rows={setores}
+        rows={patios}
         columns={columns}
         loading={loading}
         checkboxSelection
         rowSelectionModel={selectionModel}
         onRowSelectionModelChange={(newSelection) =>
-          // 🚨 Agora o retorno é Set<GridRowId>, convertemos para o formato oficial
           setSelectionModel({ type: 'include', ids: new Set(newSelection.ids) })
         }
       />
@@ -175,17 +172,44 @@ export default function SetoresPage() {
         maxWidth="sm"
       >
         <DialogTitle>
-          {editingSetor ? 'Editar Setor' : 'Cadastrar Novo Setor'}
+          {editingPatio ? 'Editar Pátio' : 'Cadastrar Novo Pátio'}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <InputField
               name="name"
-              label="Nome do Setor"
+              label="Nome do Pátio"
               value={formData.name}
               onChange={handleChange}
               required
               autoFocus
+            />
+            <InputField
+              name="address"
+              label="Endereço"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              name="cep"
+              label="CEP"
+              value={formData.cep}
+              onChange={handleChange}
+              required
+            />
+             <InputField
+              name="referencePoint"
+              label="Ponto de Referência"
+              value={formData.referencePoint || ''}
+              onChange={handleChange}
+            />
+             <InputField
+              name="mapUrl"
+              label="URL do Mapa"
+              value={formData.mapUrl}
+              onChange={handleChange}
+              required
             />
             <InputField
               name="phone"
@@ -201,16 +225,16 @@ export default function SetoresPage() {
               onChange={handleChange}
             />
             <InputField
-              name="responsible"
+              name="managerName"
               label="Nome do Responsável"
-              value={formData.responsible || ''}
+              value={formData.managerName || ''}
               onChange={handleChange}
             />
           </DialogContent>
           <DialogActions sx={{ p: '16px 24px' }}>
             <Button onClick={handleCloseModal}>Cancelar</Button>
             <Button type="submit" variant="contained">
-              {editingSetor ? 'Salvar Alterações' : 'Cadastrar'}
+              {editingPatio ? 'Salvar Alterações' : 'Cadastrar'}
             </Button>
           </DialogActions>
         </form>
